@@ -15,3 +15,8 @@ lazy val root = (project in file("."))
     scalacOptions ++= List("-encoding", "utf8", "-deprecation", "-feature", "-unchecked", "-Xfatal-warnings"),
     javacOptions ++= List("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")
   )
+
+
+dependencyOverrides ++= Seq(
+  "com.google.inject" % "guice" % "5.1.0",
+  "com.google.inject.extensions" % "guice-assistedinject" % "5.1.0")
