@@ -34,11 +34,11 @@
     <div id="actions">
 
         @form(action=routes.HomeController.list()) {
-            <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by computer name...">
+            <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by completed task name...">
             <input type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
         }
 
-        <a class="btn success" id="add" href="@routes.HomeController.create">Add a new computer</a>
+        <a class="btn success" id="add" href="@routes.HomeController.create">Add a new completed task</a>
 
     </div>
 
@@ -47,10 +47,11 @@
         <table class="computers zebra-striped">
             <thead>
                 <tr>
-                    @header(2, "Computer name")
-                    @header(3, "Introduced")
-                    @header(4, "Discontinued")
-                    @header(5, "Company")
+                    @header(2, "Completed task name")
+                    @header(3, "Achived")
+                    @header(4, "Category")
+                    @header(5, "Type")
+                    @header(6, "Reflections")
                 </tr>
             </thead>
             <tbody>
@@ -64,6 +65,9 @@
                             </td>
                             <td>
                                 @computer.discontinued.map(_.format("dd MMM yyyy")).getOrElse { <em>-</em> }
+                            </td>
+                            <td>
+                                @company.map(_.name).getOrElse { <em>-</em> }
                             </td>
                             <td>
                                 @company.map(_.name).getOrElse { <em>-</em> }

@@ -4,27 +4,28 @@
 
 @main {
     
-    <h1>Edit computer</h1>
+    <h1>Edit completed task</h1>
     
     @form(routes.HomeController.update(id)) {
         
         <fieldset>
             @CSRF.formField
-            @inputText(computerForm("name"), Symbol("_label") -> "Computer name", Symbol("_help") -> "")
-            @inputText(computerForm("introduced"), Symbol("_label") -> "Introduced date", Symbol("_help") -> "")
-            @inputText(computerForm("discontinued"), Symbol("_label") -> "Discontinued date", Symbol("_help") -> "")
+            @inputText(computerForm("name"), Symbol("_label") -> "Completed task name", Symbol("_help") -> "")
+            @inputText(computerForm("introduced"), Symbol("_label") -> "Achived date", Symbol("_help") -> "")
+            @inputText(computerForm("discontinued"), Symbol("_label") -> "Category", Symbol("_help") -> "")
             
             @select(
                 computerForm("company"), 
                 companies, 
-                Symbol("_label") -> "Company", Symbol("_default") -> "-- Choose a company --",
+                Symbol("_label") -> "Type", Symbol("_default") -> "-- Choose a company --",
                 Symbol("_showConstraints") -> false
             )
+            @inputText(computerForm("discontinued"), Symbol("_label") -> "Reflections", Symbol("_help") -> "")
         </fieldset>
         <p>Dates are in yyyy-MM-dd format</p>
 
         <div class="actions">
-            <input type="submit" value="Save this computer" class="btn primary"> or 
+            <input type="submit" value="Save this completed task" class="btn primary"> or 
             <a href="@routes.HomeController.list()" class="btn">Cancel</a>
         </div>
         
@@ -32,7 +33,7 @@
     
     @form(routes.HomeController.delete(id), Symbol("class") -> "topRight") {
         @CSRF.formField
-        <input type="submit" value="Delete this computer" class="btn danger">
+        <input type="submit" value="Delete this completed task" class="btn danger">
     }
     
 }
