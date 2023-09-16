@@ -8,6 +8,7 @@ import anorm._
 import play.api.db.DBApi
 
 import scala.concurrent.Future
+//import {CategoryRepository, Category}
 
 case class CompletedTask(id: Option[Long] = None,
                     name: String,
@@ -31,7 +32,7 @@ case class Page[A](items: Seq[A], page: Int, offset: Long, total: Long) {
 
 
 @javax.inject.Singleton
-class CompletedTaskRepository @Inject()(dbapi: DBApi, companyRepository: CompanyRepository)(implicit ec: DatabaseExecutionContext) {
+class CompletedTaskRepository @Inject()(dbapi: DBApi, companyRepository: CategoryRepository)(implicit ec: DatabaseExecutionContext) {
 
   private val db = dbapi.database("default")
 
@@ -76,7 +77,7 @@ class CompletedTaskRepository @Inject()(dbapi: DBApi, companyRepository: Company
    * @param orderBy Computer property used for sorting
    * @param filter Filter applied on the name column
    */
-  def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[(CompletedTask, Option[Company])]] = Future {
+  def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[(CompletedTask, Option[Category])]] = Future {
 
     val offset = pageSize * page
 

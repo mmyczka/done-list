@@ -11,19 +11,19 @@ import play.api.db.DBApi
 
 import scala.concurrent.Future
 
-case class Company(id: Option[Long] = None, name: String)
+case class Category(id: Option[Long] = None, name: String)
 
 @javax.inject.Singleton
-class CompanyRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionContext) {
+class CategoryRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionContext) {
 
   private val db = dbapi.database("default")
 
   /**
-   * Parse a Company from a ResultSet
+   * Parse a Category from a ResultSet
    */
   private[models] val simple = {
     get[Option[Long]]("category.id") ~ str("category.name") map {
-      case id ~ name => Company(id, name)
+      case id ~ name => Category(id, name)
     }
   }
 
@@ -42,10 +42,10 @@ class CompanyRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCo
             acc
           }
 
-          case Success(Company(Some(id), name)) =>
+          case Success(Category(Some(id), name)) =>
             (id.toString -> name) +: acc
 
-          case Success(Company(None, _)) => acc
+          case Success(Category(None, _)) => acc
         }
       }
   }).flatMap {

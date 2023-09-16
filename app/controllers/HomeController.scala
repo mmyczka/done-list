@@ -9,12 +9,14 @@ import views._
 
 import scala.concurrent.{ExecutionContext, Future}
 import models.{CompletedTaskRepository, CompletedTask}
+import models.CategoryRepository
+import java.util.Locale.Category
 
 /**
   * Manage a database of computers
   */
 class HomeController @Inject()(computerService: CompletedTaskRepository,
-                               companyService: CompanyRepository,
+                               companyService: CategoryRepository,
                                cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
@@ -32,8 +34,8 @@ class HomeController @Inject()(computerService: CompletedTaskRepository,
     mapping(
       "id" -> ignored(None: Option[Long]),
       "name" -> nonEmptyText,
-      "introduced" -> optional(date("yyyy-MM-dd")),
-      "company" -> optional(longNumber),
+      "achived" -> optional(date("yyyy-MM-dd")),
+      "category" -> optional(longNumber),
       "type" -> optional(longNumber),
       "reflections" -> optional(text)
     )(CompletedTask.apply)(CompletedTask.unapply)
