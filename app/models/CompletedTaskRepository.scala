@@ -32,7 +32,7 @@ case class Page[A](items: Seq[A], page: Int, offset: Long, total: Long) {
 
 
 @javax.inject.Singleton
-class CompletedTaskRepository @Inject()(dbapi: DBApi, companyRepository: CategoryRepository)(implicit ec: DatabaseExecutionContext) {
+class CompletedTaskRepository @Inject()(dbapi: DBApi, categoryRepository: CategoryRepository)(implicit ec: DatabaseExecutionContext) {
 
   private val db = dbapi.database("default")
 
@@ -45,23 +45,25 @@ class CompletedTaskRepository @Inject()(dbapi: DBApi, companyRepository: Categor
     get[Option[Long]]("completed_task.id") ~
       get[String]("completed_task.name") ~
       get[Option[Date]]("completed_task.achived") ~
-      get[Option[Long]]("completed_task.category_id") map {
-      case id ~ name ~ achived ~ categoryId =>
-        CompletedTask(id, name, achived, categoryId, categoryId, Some(name))
+      get[Option[Long]]("completed_task.category_id") ~
+      get[Option[Long]]("completed_task.type_id") ~
+      get[Option[String]]("completed_task.reflections") map {
+      case id ~ name ~ achived ~ categoryId ~ typeId ~ reflections =>
+        CompletedTask(id, name, achived, categoryId, typeId, reflections)
     }
   }
 
   /**
-   * Parse a (Computer,Company) from a ResultSet
+   * Parse a (CompletedTask,Category) from a ResultSet
    */
-  private val withCompany = simple ~ (companyRepository.simple.?) map {
-    case computer ~ company => computer -> company
+  private val withCategory = simple ~ (categoryRepository.simple.?) map {
+    case completedTask ~ category => completedTask -> category
   }
 
   // -- Queries
 
   /**
-   * Retrieve a computer from the id.
+   * Retrieve a completed task from the id.
    */
   def findById(id: Long): Future[Option[CompletedTask]] = Future {
     db.withConnection { implicit connection =>
@@ -70,7 +72,7 @@ class CompletedTaskRepository @Inject()(dbapi: DBApi, companyRepository: Categor
   }(ec)
 
   /**
-   * Return a page of (Computer,Company).
+   * Return a page of (CompletedTask,Category).
    *
    * @param page Page to display
    * @param pageSize Number of computers per page
@@ -89,7 +91,7 @@ class CompletedTaskRepository @Inject()(dbapi: DBApi, companyRepository: Categor
         where completed_task.name like ${filter}
         order by ${orderBy} nulls last
         limit ${pageSize} offset ${offset}
-      """.as(withCompany.*)
+      """.as(withCategory.*)
 
       val totalRows = SQL"""
         select count(*) from completed_task
@@ -102,43 +104,43 @@ class CompletedTaskRepository @Inject()(dbapi: DBApi, companyRepository: Categor
   }(ec)
 
   /**
-   * Update a computer.
+   * Update a completedTask.
    *
-   * @param id The computer id
-   * @param computer The computer values.
+   * @param id The completedTask id
+   * @param completedTask The complitedTask values.
    */
-  def update(id: Long, computer: CompletedTask) = Future {
+  def update(id: Long, completedTask: CompletedTask) = Future {
     db.withConnection { implicit connection =>
       SQL("""
         update completed_task set name = {name}, achived = {achived}, 
-          category_id = {categoryId}, type_id = {typeId}
+          category_id = {categoryId}, type_id = {typeId}, reflections = {reflections}
         where id = {id}
-      """).bind(computer.copy(id = Some(id)/* ensure */)).executeUpdate()
+      """).bind(completedTask.copy(id = Some(id)/* ensure */)).executeUpdate()
       // case class binding using ToParameterList,
       // note using SQL(..) but not SQL.. interpolation
     }
   }(ec)
 
   /**
-   * Insert a new computer.
+   * Insert a new completedTask.
    *
-   * @param computer The computer values.
+   * @param completedTask The completed task values.
    */
-  def insert(computer: CompletedTask): Future[Option[Long]] = Future {
+  def insert(completedTask: CompletedTask): Future[Option[Long]] = Future {
     db.withConnection { implicit connection =>
       SQL("""
         insert into completed_task values (
           (select next value for completed_task_seq),
           {name}, {achived}, {categoryId}, {typeId}, {reflections}
         )
-      """).bind(computer).executeInsert()
+      """).bind(completedTask).executeInsert()
     }
   }(ec)
 
   /**
-   * Delete a computer.
+   * Delete a completed task.
    *
-   * @param id Id of the computer to delete.
+   * @param id Id of the completed task to delete.
    */
   def delete(id: Long) = Future {
     db.withConnection { implicit connection =>
