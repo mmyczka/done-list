@@ -50,7 +50,7 @@ class BrowserSpec extends PlaySpec
         submit()
 
         $("section h1").text must equal("574 computers found")
-        $(".alert-message").text must equal("Done! Computer Apple II has been updated")
+        $(".alert-message").text must equal("Done! Completed task Apple II has been updated")
 
         click on id("searchbox")
         enter("Apple")
@@ -60,7 +60,7 @@ class BrowserSpec extends PlaySpec
         click on $("input.danger")
 
         $("section h1").text must equal("573 computers found")
-        $(".alert-message").text must equal("Done! Computer has been deleted")
+        $(".alert-message").text must equal("Done! Completed task has been deleted")
         
         click on $("#searchbox")
         enter("Apple")

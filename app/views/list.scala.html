@@ -1,4 +1,4 @@
-@(currentPage: Page[(Computer, Option[Company])], currentOrderBy: Int, currentFilter: String)(implicit request: MessagesRequestHeader)
+@(currentPage: Page[(CompletedTask, Option[Company])], currentOrderBy: Int, currentFilter: String)(implicit request: MessagesRequestHeader)
 
 @import helper._
 
@@ -61,10 +61,10 @@
                         <tr>
                             <td><a href="@routes.HomeController.edit(computer.id.get)">@computer.name</a></td>
                             <td>
-                                @computer.introduced.map(_.format("dd MMM yyyy")).getOrElse { <em>-</em> }
+                                @computer.achived.map(_.format("dd MMM yyyy")).getOrElse { <em>-</em> }
                             </td>
                             <td>
-                                @computer.discontinued.map(_.format("dd MMM yyyy")).getOrElse { <em>-</em> }
+                                @company.map(_.name).getOrElse { <em>-</em> }
                             </td>
                             <td>
                                 @company.map(_.name).getOrElse { <em>-</em> }

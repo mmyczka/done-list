@@ -61,7 +61,7 @@ class FunctionalSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaFutures
 
       status(result) must equal(SEE_OTHER)
       redirectLocation(result) mustBe Some("/computers")
-      flash(result).get("success") mustBe Some("Computer FooBar has been created")
+      flash(result).get("success") mustBe Some("Completed task FooBar has been created")
 
       val list = homeController.list(0, 2, "FooBar")(FakeRequest())
 

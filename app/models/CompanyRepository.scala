@@ -22,7 +22,7 @@ class CompanyRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCo
    * Parse a Company from a ResultSet
    */
   private[models] val simple = {
-    get[Option[Long]]("company.id") ~ str("company.name") map {
+    get[Option[Long]]("category.id") ~ str("category.name") map {
       case id ~ name => Company(id, name)
     }
   }
@@ -34,7 +34,7 @@ class CompanyRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCo
    * to accumulate the rows as an options list.
    */
   def options: Future[Seq[(String,String)]] = Future(db.withConnection { implicit connection =>
-    SQL"select * from company order by name".
+    SQL"select * from category order by name".
       fold(Seq.empty[(String, String)], ColumnAliaser.empty) { (acc, row) => // Anorm streaming
         row.as(simple) match {
           case Failure(parseErr) => {

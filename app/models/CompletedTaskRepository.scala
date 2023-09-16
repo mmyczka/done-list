@@ -9,15 +9,16 @@ import play.api.db.DBApi
 
 import scala.concurrent.Future
 
-case class Computer(id: Option[Long] = None,
+case class CompletedTask(id: Option[Long] = None,
                     name: String,
-                    introduced: Option[Date],
-                    discontinued: Option[Date],
-                    companyId: Option[Long])
+                    achived: Option[Date],
+                    categoryId: Option[Long],
+                    typeId: Option[Long],
+                    reflections: Option[String])
 
-object Computer {
-  implicit def toParameters: ToParameterList[Computer] =
-    Macro.toParameters[Computer]
+object CompletedTask {
+  implicit def toParameters: ToParameterList[CompletedTask] =
+    Macro.toParameters[CompletedTask]
 }
 
 /**
@@ -30,23 +31,22 @@ case class Page[A](items: Seq[A], page: Int, offset: Long, total: Long) {
 
 
 @javax.inject.Singleton
-class ComputerRepository @Inject()(dbapi: DBApi, companyRepository: CompanyRepository)(implicit ec: DatabaseExecutionContext) {
+class CompletedTaskRepository @Inject()(dbapi: DBApi, companyRepository: CompanyRepository)(implicit ec: DatabaseExecutionContext) {
 
   private val db = dbapi.database("default")
 
   // -- Parsers
 
   /**
-   * Parse a Computer from a ResultSet
+   * Parse a CompletedTask from a ResultSet
    */
   private val simple = {
-    get[Option[Long]]("computer.id") ~
-      get[String]("computer.name") ~
-      get[Option[Date]]("computer.introduced") ~
-      get[Option[Date]]("computer.discontinued") ~
-      get[Option[Long]]("computer.company_id") map {
-      case id ~ name ~ introduced ~ discontinued ~ companyId =>
-        Computer(id, name, introduced, discontinued, companyId)
+    get[Option[Long]]("completed_task.id") ~
+      get[String]("completed_task.name") ~
+      get[Option[Date]]("completed_task.achived") ~
+      get[Option[Long]]("completed_task.category_id") map {
+      case id ~ name ~ achived ~ categoryId =>
+        CompletedTask(id, name, achived, categoryId, categoryId, Some(name))
     }
   }
 
@@ -62,9 +62,9 @@ class ComputerRepository @Inject()(dbapi: DBApi, companyRepository: CompanyRepos
   /**
    * Retrieve a computer from the id.
    */
-  def findById(id: Long): Future[Option[Computer]] = Future {
+  def findById(id: Long): Future[Option[CompletedTask]] = Future {
     db.withConnection { implicit connection =>
-      SQL"select * from computer where id = $id".as(simple.singleOpt)
+      SQL"select * from completed_task where id = $id".as(simple.singleOpt)
     }
   }(ec)
 
@@ -76,24 +76,24 @@ class ComputerRepository @Inject()(dbapi: DBApi, companyRepository: CompanyRepos
    * @param orderBy Computer property used for sorting
    * @param filter Filter applied on the name column
    */
-  def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[(Computer, Option[Company])]] = Future {
+  def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[(CompletedTask, Option[Company])]] = Future {
 
     val offset = pageSize * page
 
     db.withConnection { implicit connection =>
 
       val computers = SQL"""
-        select * from computer
-        left join company on computer.company_id = company.id
-        where computer.name like ${filter}
+        select * from completed_task
+        left join category on completed_task.category_id = category.id
+        where completed_task.name like ${filter}
         order by ${orderBy} nulls last
         limit ${pageSize} offset ${offset}
       """.as(withCompany.*)
 
       val totalRows = SQL"""
-        select count(*) from computer
-        left join company on computer.company_id = company.id
-        where computer.name like ${filter}
+        select count(*) from completed_task
+        left join category on completed_task.category_id = category.id
+        where completed_task.name like ${filter}
       """.as(scalar[Long].single)
 
       Page(computers, page, offset, totalRows)
@@ -106,11 +106,11 @@ class ComputerRepository @Inject()(dbapi: DBApi, companyRepository: CompanyRepos
    * @param id The computer id
    * @param computer The computer values.
    */
-  def update(id: Long, computer: Computer) = Future {
+  def update(id: Long, computer: CompletedTask) = Future {
     db.withConnection { implicit connection =>
       SQL("""
-        update computer set name = {name}, introduced = {introduced}, 
-          discontinued = {discontinued}, company_id = {companyId}
+        update completed_task set name = {name}, achived = {achived}, 
+          category_id = {categoryId}, type_id = {typeId}
         where id = {id}
       """).bind(computer.copy(id = Some(id)/* ensure */)).executeUpdate()
       // case class binding using ToParameterList,
@@ -123,12 +123,12 @@ class ComputerRepository @Inject()(dbapi: DBApi, companyRepository: CompanyRepos
    *
    * @param computer The computer values.
    */
-  def insert(computer: Computer): Future[Option[Long]] = Future {
+  def insert(computer: CompletedTask): Future[Option[Long]] = Future {
     db.withConnection { implicit connection =>
       SQL("""
-        insert into computer values (
-          (select next value for computer_seq),
-          {name}, {introduced}, {discontinued}, {companyId}
+        insert into completed_task values (
+          (select next value for completed_task_seq),
+          {name}, {achived}, {categoryId}, {typeId}, {reflections}
         )
       """).bind(computer).executeInsert()
     }
@@ -141,7 +141,7 @@ class ComputerRepository @Inject()(dbapi: DBApi, companyRepository: CompanyRepos
    */
   def delete(id: Long) = Future {
     db.withConnection { implicit connection =>
-      SQL"delete from computer where id = ${id}".executeUpdate()
+      SQL"delete from completed_task where id = ${id}".executeUpdate()
     }
   }(ec)
 

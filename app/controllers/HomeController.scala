@@ -8,11 +8,12 @@ import play.api.mvc._
 import views._
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.{CompletedTaskRepository, CompletedTask}
 
 /**
   * Manage a database of computers
   */
-class HomeController @Inject()(computerService: ComputerRepository,
+class HomeController @Inject()(computerService: CompletedTaskRepository,
                                companyService: CompanyRepository,
                                cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
@@ -32,9 +33,10 @@ class HomeController @Inject()(computerService: ComputerRepository,
       "id" -> ignored(None: Option[Long]),
       "name" -> nonEmptyText,
       "introduced" -> optional(date("yyyy-MM-dd")),
-      "discontinued" -> optional(date("yyyy-MM-dd")),
-      "company" -> optional(longNumber)
-    )(Computer.apply)(Computer.unapply)
+      "company" -> optional(longNumber),
+      "type" -> optional(longNumber),
+      "reflections" -> optional(text)
+    )(CompletedTask.apply)(CompletedTask.unapply)
   )
 
   // -- Actions
@@ -90,7 +92,7 @@ class HomeController @Inject()(computerService: ComputerRepository,
       },
       computer => {
         computerService.update(id, computer).map { _ =>
-          Home.flashing("success" -> "Computer %s has been updated".format(computer.name))
+          Home.flashing("success" -> "Completed task %s has been updated".format(computer.name))
         }
       }
     )
@@ -115,7 +117,7 @@ class HomeController @Inject()(computerService: ComputerRepository,
       },
       computer => {
         computerService.insert(computer).map { _ =>
-          Home.flashing("success" -> "Computer %s has been created".format(computer.name))
+          Home.flashing("success" -> "Completed task %s has been created".format(computer.name))
         }
       }
     )
@@ -126,7 +128,7 @@ class HomeController @Inject()(computerService: ComputerRepository,
     */
   def delete(id: Long) = Action.async {
     computerService.delete(id).map { _ =>
-      Home.flashing("success" -> "Computer has been deleted")
+      Home.flashing("success" -> "Completed task has been deleted")
     }
   }
 
