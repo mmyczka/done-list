@@ -14,7 +14,7 @@ case class CompletedTask(id: Option[Long] = None,
                     name: String,
                     achived: Option[Date],
                     categoryId: Option[Long],
-                    typeId: Option[Long],
+                    termId: Option[Long],
                     reflections: Option[String])
 
 object CompletedTask {
@@ -32,7 +32,7 @@ case class Page[A](items: Seq[A], page: Int, offset: Long, total: Long) {
 
 
 @javax.inject.Singleton
-class CompletedTaskRepository @Inject()(dbapi: DBApi, categoryRepository: CategoryRepository)(implicit ec: DatabaseExecutionContext) {
+class CompletedTaskRepository @Inject()(dbapi: DBApi, categoryRepository: CategoryRepository, termRepository: TermRepository)(implicit ec: DatabaseExecutionContext) {
 
   private val db = dbapi.database("default")
 
@@ -46,18 +46,18 @@ class CompletedTaskRepository @Inject()(dbapi: DBApi, categoryRepository: Catego
       get[String]("completed_task.name") ~
       get[Option[Date]]("completed_task.achived") ~
       get[Option[Long]]("completed_task.category_id") ~
-      get[Option[Long]]("completed_task.type_id") ~
+      get[Option[Long]]("completed_task.term_id") ~
       get[Option[String]]("completed_task.reflections") map {
-      case id ~ name ~ achived ~ categoryId ~ typeId ~ reflections =>
-        CompletedTask(id, name, achived, categoryId, typeId, reflections)
+      case id ~ name ~ achived ~ categoryId ~ termId ~ reflections =>
+        CompletedTask(id, name, achived, categoryId, termId, reflections)
     }
   }
 
   /**
    * Parse a (CompletedTask,Category) from a ResultSet
    */
-  private val withCategory = simple ~ (categoryRepository.simple.?) map {
-    case completedTask ~ category => completedTask -> category
+  private val withCategoryAndTerm = simple ~ (categoryRepository.simple.?) ~ (termRepository.simple.?) map {
+    case completedTask ~ category ~ term => (completedTask, category, term)
   }
 
   // -- Queries
@@ -79,7 +79,7 @@ class CompletedTaskRepository @Inject()(dbapi: DBApi, categoryRepository: Catego
    * @param orderBy Computer property used for sorting
    * @param filter Filter applied on the name column
    */
-  def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[(CompletedTask, Option[Category])]] = Future {
+  def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[(CompletedTask, Option[Category], Option[Term])]] = Future {
 
     val offset = pageSize * page
 
@@ -88,10 +88,11 @@ class CompletedTaskRepository @Inject()(dbapi: DBApi, categoryRepository: Catego
       val computers = SQL"""
         select * from completed_task
         left join category on completed_task.category_id = category.id
+        left join term on completed_task.term_id = term.id
         where completed_task.name like ${filter}
         order by ${orderBy} nulls last
         limit ${pageSize} offset ${offset}
-      """.as(withCategory.*)
+      """.as(withCategoryAndTerm.*)
 
       val totalRows = SQL"""
         select count(*) from completed_task
@@ -113,7 +114,7 @@ class CompletedTaskRepository @Inject()(dbapi: DBApi, categoryRepository: Catego
     db.withConnection { implicit connection =>
       SQL("""
         update completed_task set name = {name}, achived = {achived}, 
-          category_id = {categoryId}, type_id = {typeId}, reflections = {reflections}
+          category_id = {categoryId}, term_id = {termId}, reflections = {reflections}
         where id = {id}
       """).bind(completedTask.copy(id = Some(id)/* ensure */)).executeUpdate()
       // case class binding using ToParameterList,
@@ -131,7 +132,7 @@ class CompletedTaskRepository @Inject()(dbapi: DBApi, categoryRepository: Catego
       SQL("""
         insert into completed_task values (
           (select next value for completed_task_seq),
-          {name}, {achived}, {categoryId}, {typeId}, {reflections}
+          {name}, {achived}, {categoryId}, {termId}, {reflections}
         )
       """).bind(completedTask).executeInsert()
     }

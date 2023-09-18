@@ -1,4 +1,4 @@
-@(currentPage: Page[(CompletedTask, Option[Category])], currentOrderBy: Int, currentFilter: String)(implicit request: MessagesRequestHeader)
+@(currentPage: Page[(CompletedTask, Option[Category], Option[Term])], currentOrderBy: Int, currentFilter: String)(implicit request: MessagesRequestHeader)
 
 @import helper._
 
@@ -42,35 +42,35 @@
 
     </div>
 
-    @Option(currentPage.items).filterNot(_.isEmpty).map { computers =>
+    @Option(currentPage.items).filterNot(_.isEmpty).map { tasks =>
 
-        <table class="computers zebra-striped">
+        <table class="tasks zebra-striped">
             <thead>
                 <tr>
                     @header(2, "Completed task name")
                     @header(3, "Achived")
                     @header(4, "Category")
-                    @header(5, "Type")
+                    @header(5, "Term")
                     @header(6, "Reflections")
                 </tr>
             </thead>
             <tbody>
 
-                @computers.map {
-                    case (computer, company) => {
+                @tasks.map {
+                    case (task, category, term) => {
                         <tr>
-                            <td><a href="@routes.HomeController.edit(computer.id.get)">@computer.name</a></td>
+                            <td><a href="@routes.HomeController.edit(task.id.get)">@task.name</a></td>
                             <td>
-                                @computer.achived.map(_.format("dd MMM yyyy")).getOrElse { <em>-</em> }
+                                @task.achived.map(_.format("dd MMM yyyy")).getOrElse { <em>-</em> }
                             </td>
                             <td>
-                                @company.map(_.name).getOrElse { <em>-</em> }
+                                @category.map(_.name).getOrElse { <em>-</em> }
                             </td>
                             <td>
-                                @company.map(_.name).getOrElse { <em>-</em> }
+                                @term.map(_.name).getOrElse { <em>-</em> }
                             </td>
                             <td>
-                                @company.map(_.name).getOrElse { <em>-</em> }
+                                @task.reflections.getOrElse { <em>-</em> }
                             </td>
                         </tr>
                     }
@@ -91,7 +91,7 @@
                     </li>
                 }
                 <li class="current">
-                    <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + computers.size) of @currentPage.total</a>
+                    <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + tasks.size) of @currentPage.total</a>
                 </li>
                 @currentPage.next.map { page =>
                     <li class="next">

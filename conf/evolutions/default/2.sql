@@ -1,9 +1,10 @@
 # --- Sample dataset
 
 # --- !Ups
-insert into types (id,name) values (  1,'Apple Inc.');
-insert into types (id,name) values (  2,'Thinking Machines');
-insert into types (id,name) values (  3,'Lenovo');
+insert into term (id,name) values (  1,'Day');
+insert into term (id,name) values (  2,'Week');
+insert into term (id,name) values (  3,'Month');
+insert into term (id,name) values (  4,'Year');
 
 insert into category (id,name) values (  1,'Apple Inc.');
 insert into category (id,name) values (  2,'Thinking Machines');
@@ -48,20 +49,20 @@ insert into category (id,name) values ( 41,'HTC Corporation');
 insert into category (id,name) values ( 42,'Research In Motion');
 insert into category (id,name) values ( 43,'Samsung Electronics');
 
-insert into completed_task (id,name,achived,category_id,type_id,reflections) values (  1,'MacBook Pro 15.4 inch',null,11,1,'reflection');
-insert into completed_task (id,name,achived,category_id,type_id,reflections) values (  2,'CM-2a',null,12,2,null);
-insert into completed_task (id,name,achived,category_id,type_id,reflections) values (  3,'CM-200',null,12,2,'reflection');
-insert into completed_task (id,name,achived,category_id,type_id,reflections) values (  4,'CM-5e',null,12,2,'reflection');
-insert into completed_task (id,name,achived,category_id,type_id,reflections) values (  5,'CM-5','1991-01-01',12,2,'reflection');
-insert into completed_task (id,name,achived,category_id,type_id,reflections) values (  6,'MacBook Pro','2006-01-10',11,1,'reflection');
-insert into completed_task (id,name,achived,category_id,type_id,reflections) values (  7,'Apple IIe',null,11,1,'reflection');
-insert into completed_task (id,name,achived,category_id,type_id,reflections) values (  8,'Apple IIc',null,11,1,'reflection');
-insert into completed_task (id,name,achived,category_id,type_id,reflections) values (  9,'Apple IIGS',null,11,1,'reflection');
-insert into completed_task (id,name,achived,category_id,type_id,reflections) values ( 10,'Apple IIc Plus',null,11,1,'some');
-insert into completed_task (id,name,achived,category_id,type_id,reflections) values ( 11,'Apple II Plus',null,11,1,'txt');
+insert into completed_task (id,name,achived,category_id,term_id,reflections) values (  1,'MacBook Pro 15.4 inch',null,11,1,'reflection');
+insert into completed_task (id,name,achived,category_id,term_id,reflections) values (  2,'CM-2a',null,12,2,null);
+insert into completed_task (id,name,achived,category_id,term_id,reflections) values (  3,'CM-200',null,12,2,'reflection');
+insert into completed_task (id,name,achived,category_id,term_id,reflections) values (  4,'CM-5e',null,12,2,'reflection');
+insert into completed_task (id,name,achived,category_id,term_id,reflections) values (  5,'CM-5','1991-01-01',12,2,'reflection');
+insert into completed_task (id,name,achived,category_id,term_id,reflections) values (  6,'MacBook Pro','2006-01-10',11,1,'reflection');
+insert into completed_task (id,name,achived,category_id,term_id,reflections) values (  7,'Apple IIe',null,11,1,'reflection');
+insert into completed_task (id,name,achived,category_id,term_id,reflections) values (  8,'Apple IIc',null,11,1,'reflection');
+insert into completed_task (id,name,achived,category_id,term_id,reflections) values (  9,'Apple IIGS',null,11,1,'reflection');
+insert into completed_task (id,name,achived,category_id,term_id,reflections) values ( 10,'Apple IIc Plus',null,11,1,'some');
+insert into completed_task (id,name,achived,category_id,term_id,reflections) values ( 11,'Apple II Plus',null,11,1,'txt');
 
 # --- !Downs
 
 delete from completed_task;
 delete from category;
-delete from types
+delete from term

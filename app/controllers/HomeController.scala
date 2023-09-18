@@ -10,13 +10,15 @@ import views._
 import scala.concurrent.{ExecutionContext, Future}
 import models.{CompletedTaskRepository, CompletedTask}
 import models.CategoryRepository
+import models.TermRepository
 import java.util.Locale.Category
 
 /**
   * Manage a database of computers
   */
-class HomeController @Inject()(computerService: CompletedTaskRepository,
-                               companyService: CategoryRepository,
+class HomeController @Inject()(taskService: CompletedTaskRepository,
+                               categoryService: CategoryRepository,
+                               termService: TermRepository,
                                cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
@@ -36,7 +38,7 @@ class HomeController @Inject()(computerService: CompletedTaskRepository,
       "name" -> nonEmptyText,
       "achived" -> optional(date("yyyy-MM-dd")),
       "category" -> optional(longNumber),
-      "type" -> optional(longNumber),
+      "term" -> optional(longNumber),
       "reflections" -> optional(text)
     )(CompletedTask.apply)(CompletedTask.unapply)
   )
@@ -58,7 +60,7 @@ class HomeController @Inject()(computerService: CompletedTaskRepository,
     * @param filter  Filter applied on computer names
     */
   def list(page: Int, orderBy: Int, filter: String) = Action.async { implicit request =>
-    computerService.list(page = page, orderBy = orderBy, filter = ("%" + filter + "%")).map { page =>
+    taskService.list(page = page, orderBy = orderBy, filter = ("%" + filter + "%")).map { page =>
       Ok(html.list(page, orderBy, filter))
     }
   }
@@ -69,15 +71,17 @@ class HomeController @Inject()(computerService: CompletedTaskRepository,
     * @param id Id of the computer to edit
     */
   def edit(id: Long) = Action.async { implicit request =>
-    computerService.findById(id).flatMap {
-      case Some(computer) =>
-        companyService.options.map { options =>
-          Ok(html.editForm(id, computerForm.fill(computer), options))
-        }
-      case other =>
-        Future.successful(NotFound)
+    for{
+      computer <- taskService.findById(id)
+      options <- categoryService.options
+      terms <- termService.options
+    } yield {
+      computer match {
+        case Some(computer) => Ok(html.editForm(id, computerForm.fill(computer), options, terms))
+        case _ => NotFound
+      }
+      }
     }
-  }
 
   /**
     * Handle the 'edit form' submission
@@ -88,12 +92,15 @@ class HomeController @Inject()(computerService: CompletedTaskRepository,
     computerForm.bindFromRequest().fold(
       formWithErrors => {
         logger.warn(s"form error: $formWithErrors")
-        companyService.options.map { options =>
-          BadRequest(html.editForm(id, formWithErrors, options))
+        for {
+          options <- categoryService.options
+          terms <- termService.options
+        } yield {
+          BadRequest(html.editForm(id, formWithErrors, options, terms))
         }
       },
       computer => {
-        computerService.update(id, computer).map { _ =>
+        taskService.update(id, computer).map { _ =>
           Home.flashing("success" -> "Completed task %s has been updated".format(computer.name))
         }
       }
@@ -104,8 +111,11 @@ class HomeController @Inject()(computerService: CompletedTaskRepository,
     * Display the 'new computer form'.
     */
   def create = Action.async { implicit request =>
-    companyService.options.map { options =>
-      Ok(html.createForm(computerForm, options))
+    for{
+      options <- categoryService.options
+      terms <- termService.options
+    } yield {
+      Ok(html.createForm(computerForm, options, terms))
     }
   }
 
@@ -114,11 +124,15 @@ class HomeController @Inject()(computerService: CompletedTaskRepository,
     */
   def save = Action.async { implicit request =>
     computerForm.bindFromRequest().fold(
-      formWithErrors => companyService.options.map { options =>
-        BadRequest(html.createForm(formWithErrors, options))
+      formWithErrors => 
+        for{
+          options <- categoryService.options
+          terms <- termService.options
+        } yield {
+          BadRequest(html.createForm(formWithErrors, options, terms))
       },
       computer => {
-        computerService.insert(computer).map { _ =>
+        taskService.insert(computer).map { _ =>
           Home.flashing("success" -> "Completed task %s has been created".format(computer.name))
         }
       }
@@ -129,7 +143,7 @@ class HomeController @Inject()(computerService: CompletedTaskRepository,
     * Handle computer deletion.
     */
   def delete(id: Long) = Action.async {
-    computerService.delete(id).map { _ =>
+    taskService.delete(id).map { _ =>
       Home.flashing("success" -> "Completed task has been deleted")
     }
   }

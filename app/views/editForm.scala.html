@@ -1,4 +1,4 @@
-@(id: Long, computerForm: Form[Computer], companies : Seq[(String, String)])(implicit requestHeader: MessagesRequestHeader)
+@(id: Long, taskForm: Form[CompletedTask], categories : Seq[(String, String)], terms : Seq[(String, String)])(implicit requestHeader: MessagesRequestHeader)
 
 @import views.html.helper._
 
@@ -10,17 +10,25 @@
         
         <fieldset>
             @CSRF.formField
-            @inputText(computerForm("name"), Symbol("_label") -> "Completed task name", Symbol("_help") -> "")
-            @inputText(computerForm("introduced"), Symbol("_label") -> "Achived date", Symbol("_help") -> "")
-            @inputText(computerForm("discontinued"), Symbol("_label") -> "Category", Symbol("_help") -> "")
+            @inputText(taskForm("name"), Symbol("_label") -> "Completed task name", Symbol("_help") -> "")
+            @inputText(taskForm("achived"), Symbol("_label") -> "Achived date", Symbol("_help") -> "")
             
             @select(
-                computerForm("company"), 
-                companies, 
-                Symbol("_label") -> "Type", Symbol("_default") -> "-- Choose a company --",
+                taskForm("category"), 
+                categories, 
+                Symbol("_label") -> "Category", Symbol("_default") -> "-- Choose a category --",
                 Symbol("_showConstraints") -> false
             )
-            @inputText(computerForm("discontinued"), Symbol("_label") -> "Reflections", Symbol("_help") -> "")
+
+            @select(
+                taskForm("term"), 
+                terms, 
+                Symbol("_label") -> "Term", Symbol("_default") -> "-- Choose a term --",
+                Symbol("_showConstraints") -> false
+            )
+
+            @textarea(taskForm("reflections"), Symbol("_label") -> "Reflections", Symbol("_help") -> "", Symbol("_rows") -> 50)
+           
         </fieldset>
         <p>Dates are in yyyy-MM-dd format</p>
 
