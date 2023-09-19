@@ -26,12 +26,7 @@ table.tasks em {
     color: #aaa;
 }
 
-table.tasks .col3, table.computers .col4, table.computers .col5 {
-    width: 10%;
-    min-width: 100px;
-}
-
-table.tasks .col6 {
+table.tasks .col3 {
     width: 40%;
     min-width: 300px;
 }

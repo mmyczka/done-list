@@ -11,8 +11,9 @@
         <fieldset>
             @CSRF.formField
             @inputText(taskForm("name"), Symbol("_label") -> "Completed task name", Symbol("_help") -> "")
-            @inputText(taskForm("achived"), Symbol("_label") -> "Achived date", Symbol("_help") -> "")
+            @inputText(taskForm("achieved"), Symbol("_label") -> "Achieved", Symbol("_help") -> "")
             
+
             @select(
                 taskForm("category"), 
                 categories, 
@@ -30,7 +31,7 @@
             @textarea(taskForm("reflections"), Symbol("_label") -> "Reflections", Symbol("_help") -> "", Symbol("_rows") -> 50)
            
         </fieldset>
-        <p>Dates are in yyyy-MM-dd format</p>
+        <p>Dates are in yyyy-MM-dd HH:mm format</p>
 
         <div class="actions">
             <input type="submit" value="Save this completed task" class="btn primary"> or 

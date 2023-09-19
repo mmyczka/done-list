@@ -12,10 +12,10 @@ import scala.concurrent.Future
 
 case class CompletedTask(id: Option[Long] = None,
                     name: String,
-                    achived: Option[Date],
+                    reflections: Option[String],
                     categoryId: Option[Long],
                     termId: Option[Long],
-                    reflections: Option[String])
+                    achieved: Option[Date])
 
 object CompletedTask {
   implicit def toParameters: ToParameterList[CompletedTask] =
@@ -44,12 +44,12 @@ class CompletedTaskRepository @Inject()(dbapi: DBApi, categoryRepository: Catego
   private val simple = {
     get[Option[Long]]("completed_task.id") ~
       get[String]("completed_task.name") ~
-      get[Option[Date]]("completed_task.achived") ~
+      get[Option[String]]("completed_task.reflections") ~
       get[Option[Long]]("completed_task.category_id") ~
       get[Option[Long]]("completed_task.term_id") ~
-      get[Option[String]]("completed_task.reflections") map {
-      case id ~ name ~ achived ~ categoryId ~ termId ~ reflections =>
-        CompletedTask(id, name, achived, categoryId, termId, reflections)
+        get[Option[Date]]("completed_task.achieved") map {
+      case id ~ name ~ reflections ~ categoryId ~ termId ~ achieved =>
+        CompletedTask(id, name, reflections, categoryId, termId, achieved)
     }
   }
 
@@ -113,7 +113,7 @@ class CompletedTaskRepository @Inject()(dbapi: DBApi, categoryRepository: Catego
   def update(id: Long, completedTask: CompletedTask) = Future {
     db.withConnection { implicit connection =>
       SQL("""
-        update completed_task set name = {name}, achived = {achived}, 
+        update completed_task set name = {name}, achieved = {achieved}, 
           category_id = {categoryId}, term_id = {termId}, reflections = {reflections}
         where id = {id}
       """).bind(completedTask.copy(id = Some(id)/* ensure */)).executeUpdate()
@@ -132,7 +132,7 @@ class CompletedTaskRepository @Inject()(dbapi: DBApi, categoryRepository: Catego
       SQL("""
         insert into completed_task values (
           (select next value for completed_task_seq),
-          {name}, {achived}, {categoryId}, {termId}, {reflections}
+          {name}, {reflections}, {categoryId}, {termId}, {achieved}
         )
       """).bind(completedTask).executeInsert()
     }

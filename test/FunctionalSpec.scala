@@ -10,7 +10,7 @@ import play.api.test.CSRFTokenHelper._
 class FunctionalSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaFutures {
 
   def dateIs(date: java.util.Date, str: String) = {
-    new java.text.SimpleDateFormat("yyyy-MM-dd").format(date) == str
+    new java.text.SimpleDateFormat("yyyy-MM-dd HH-mm").format(date) == str
   }
 
   def homeController = app.injector.instanceOf(classOf[HomeController])

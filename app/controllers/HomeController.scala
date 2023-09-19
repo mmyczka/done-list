@@ -30,16 +30,16 @@ class HomeController @Inject()(taskService: CompletedTaskRepository,
   val Home = Redirect(routes.HomeController.list(0, 2, ""))
 
   /**
-    * Describe the computer form (used in both edit and create screens).
+    * Describe the task form (used in both edit and create screens).
     */
   val computerForm = Form(
     mapping(
       "id" -> ignored(None: Option[Long]),
       "name" -> nonEmptyText,
-      "achived" -> optional(date("yyyy-MM-dd")),
+      "reflections" -> optional(text),
       "category" -> optional(longNumber),
       "term" -> optional(longNumber),
-      "reflections" -> optional(text)
+      "achieved" -> optional(date("yyyy-MM-dd HH:mm")),
     )(CompletedTask.apply)(CompletedTask.unapply)
   )
 
@@ -66,18 +66,18 @@ class HomeController @Inject()(taskService: CompletedTaskRepository,
   }
 
   /**
-    * Display the 'edit form' of a existing Computer.
+    * Display the 'edit form' of a existing Completed task.
     *
-    * @param id Id of the computer to edit
+    * @param id Id of the task to edit
     */
   def edit(id: Long) = Action.async { implicit request =>
     for{
-      computer <- taskService.findById(id)
+      task <- taskService.findById(id)
       options <- categoryService.options
       terms <- termService.options
     } yield {
-      computer match {
-        case Some(computer) => Ok(html.editForm(id, computerForm.fill(computer), options, terms))
+      task match {
+        case Some(task) => Ok(html.editForm(id, computerForm.fill(task), options, terms))
         case _ => NotFound
       }
       }

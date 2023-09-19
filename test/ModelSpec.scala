@@ -11,7 +11,7 @@ class ModelSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaFutures {
   // -- Date helpers
   
   def dateIs(date: java.util.Date, str: String) = {
-    new java.text.SimpleDateFormat("yyyy-MM-dd").format(date) == str
+    new java.text.SimpleDateFormat("yyyy-MM-dd HH-mm").format(date) == str
   }
   
   // --

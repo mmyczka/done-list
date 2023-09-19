@@ -48,10 +48,12 @@
             <thead>
                 <tr>
                     @header(2, "Completed task name")
-                    @header(3, "Achived")
+                    @header(3, "Reflections")
                     @header(4, "Category")
                     @header(5, "Term")
-                    @header(6, "Reflections")
+                    @header(6, "Day")
+                    @header(7, "Time")
+                    @header(8, "Date")
                 </tr>
             </thead>
             <tbody>
@@ -61,7 +63,7 @@
                         <tr>
                             <td><a href="@routes.HomeController.edit(task.id.get)">@task.name</a></td>
                             <td>
-                                @task.achived.map(_.format("dd MMM yyyy")).getOrElse { <em>-</em> }
+                                @task.reflections.getOrElse { <em>-</em> }
                             </td>
                             <td>
                                 @category.map(_.name).getOrElse { <em>-</em> }
@@ -70,7 +72,13 @@
                                 @term.map(_.name).getOrElse { <em>-</em> }
                             </td>
                             <td>
-                                @task.reflections.getOrElse { <em>-</em> }
+                                @task.achieved.map(_.format("EEEE")).getOrElse { <em>-</em> }
+                            </td>
+                            <td>
+                                @task.achieved.map(_.format("HH:mm")).getOrElse { <em>-</em> }
+                            </td>
+                            <td>
+                                @task.achieved.map(_.format("dd MMM yyyy")).getOrElse { <em>-</em> }
                             </td>
                         </tr>
                     }

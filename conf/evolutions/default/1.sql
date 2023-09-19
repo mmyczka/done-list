@@ -19,10 +19,10 @@ create table term (
 create table completed_task (
   id                        bigint not null,
   name                      varchar(255) not null,
-  achived                   timestamp,
+  reflections               text,
   category_id               bigint,
   term_id                   bigint,
-  reflections               text,
+  achieved                  timestamp,
   constraint pk_completed_task primary key (id))
 ;
 

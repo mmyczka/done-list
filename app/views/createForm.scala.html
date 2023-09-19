@@ -11,7 +11,8 @@
         <fieldset>
             @CSRF.formField
             @inputText(taskForm("name"), Symbol("_label") -> "Completed task name", Symbol("_help") -> "")            
-            @inputDate(taskForm("achived").copy(value=Some(java.time.LocalDate.now().toString)), Symbol("_label") -> "Achived date", Symbol("_help") -> "")
+
+            @inputText(taskForm("achieved").copy(value=Some(java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")).toString)), Symbol("_label") -> "Achieved", Symbol("_help") -> "")
 
             @select(
                 taskForm("category"), 
@@ -29,7 +30,7 @@
             @textarea(taskForm("reflections"), Symbol("_label") -> "Reflections", Symbol("_help") -> "", Symbol("_rows") -> 5)
         </fieldset>
 
-        <p>Dates are in yyyy-MM-dd format</p>
+        <p>Dates are in yyyy-MM-dd HH-mm format</p>
         
         <div class="actions">
             <input type="submit" value="Create this completed task" class="btn primary"> or 
