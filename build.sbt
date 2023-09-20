@@ -20,3 +20,11 @@ lazy val root = (project in file("."))
 dependencyOverrides ++= Seq(
   "com.google.inject" % "guice" % "5.1.0",
   "com.google.inject.extensions" % "guice-assistedinject" % "5.1.0")
+
+  //Added to fix the issue with the tests
+  //https://github.com/playframework/playframework/issues/11209
+  Test / javaOptions ++= Seq(
+  "--add-exports=java.base/sun.security.x509=ALL-UNNAMED",
+  //"--add-opens=java.base/sun.security.ssl=ALL-UNNAMED" // Could be needed as well in some cases
+)
+// Test / fork := true // This is the default anyway, just a reminder in case you changed that to false

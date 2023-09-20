@@ -11,50 +11,51 @@ class ModelSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaFutures {
   // -- Date helpers
   
   def dateIs(date: java.util.Date, str: String) = {
-    new java.text.SimpleDateFormat("yyyy-MM-dd HH-mm").format(date) == str
+    new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(date) == str
   }
   
   // --
 
-  def computerService: ComputerRepository = app.injector.instanceOf(classOf[ComputerRepository])
+  def completedTaskService: CompletedTaskRepository = app.injector.instanceOf(classOf[CompletedTaskRepository])
 
-  "Computer model" should {
+  "Completed task model" should {
 
     "be retrieved by id" in {
-      whenReady(computerService.findById(21)) { maybeComputer =>
-        val macintosh = maybeComputer.get
+      whenReady(completedTaskService.findById(8)) { maybeTask =>
+        val taskCleaning = maybeTask.get
 
-        macintosh.name must equal("Macintosh")
-        macintosh.introduced.value must matchPattern {
-          case date:java.util.Date if dateIs(date, "1984-01-24") =>
+        taskCleaning.name must equal("Washed the dishes")
+        taskCleaning.achieved.value must matchPattern {
+          case date:java.util.Date if dateIs(date, "2023-09-18 12:37") =>
         }
       }
     }
     
     "be listed along its companies" in {
-        whenReady(computerService.list()) { computers =>
+        whenReady(completedTaskService.list()) { tasks =>
 
-          computers.total must equal(574)
-          computers.items must have length(10)
+          tasks.total must equal(11)
+          tasks.items must have length(10)
         }
     }
     
     "be updated if needed" in {
 
-      val result = computerService.findById(21).flatMap { computer =>
-        computerService.update(21, Computer(name="The Macintosh",
-          introduced=None,
-          discontinued=None,
-          companyId=Some(1))).flatMap { _ =>
-          computerService.findById(21)
+      val result = completedTaskService.findById(21).flatMap { computer =>
+        completedTaskService.update(7, CompletedTask(name="Washer",
+         reflections=None, 
+         categoryId=Some(1), 
+         termId=Some(1), 
+         achieved=None)).flatMap { _ =>
+          completedTaskService.findById(7)
         }
       }
 
-      whenReady(result) { computer =>
-        val macintosh = computer.get
+      whenReady(result) { task =>
+        val wash = task.get
 
-        macintosh.name must equal("The Macintosh")
-        macintosh.introduced mustBe None
+        wash.name must equal("Washer")
+        wash.achieved mustBe None
       }
     }
   }

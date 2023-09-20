@@ -22,51 +22,51 @@ class BrowserSpec extends PlaySpec
 
       go to(s"http://localhost:$port/")
 
-      find("header-title").get.text must equal("Play sample application — Computer database")
-        find("section-title").get.text must equal("574 computers found")
+      find("header-title").get.text must equal("Done list")
+        find("section-title").get.text must equal("11 Completed tasks found")
         
-      find(cssSelector(".current")).get.text must equal("Displaying 1 to 10 of 574")
+      find(cssSelector(".current")).get.text must equal("Displaying 1 to 10 of 11")
 
         click on $("#pagination li.next a")
         
-        $("#pagination li.current").text must equal("Displaying 11 to 20 of 574")
+        $("#pagination li.current").text must equal("Displaying 11 to 11 of 11")
 
         click on id("searchbox")
-        enter("Apple")
+        enter("Went")
         click on id("searchsubmit")
         
-        $("section h1").text must equal("13 computers found")
-        click on linkText("Apple II")
+        $("section h1").text must equal("2 Completed tasks found")
+        click on linkText("Went grocery shopping")
         
-        click on id("discontinued")
+        click on id("achieved")
         enter("xxx")
         submit()
 
         find(cssSelector("dl.error")) must not be empty
-        $("dl.error label").text must equal("Discontinued date")
+        $("dl.error label").text must equal("Achieved")
 
-        click on id("discontinued")
+        click on id("achieved")
         enter("")
         submit()
 
-        $("section h1").text must equal("574 computers found")
-        $(".alert-message").text must equal("Done! Completed task Apple II has been updated")
+        $("section h1").text must equal("11 Completed tasks found")
+        $(".alert-message").text must equal("Done! Completed task Went grocery shopping has been updated")
 
         click on id("searchbox")
-        enter("Apple")
+        enter("Washed")
         submit()
         
-        click on linkText("Apple II")
+        click on linkText("Washed the dishes")
         click on $("input.danger")
 
-        $("section h1").text must equal("573 computers found")
+        $("section h1").text must equal("10 Completed tasks found")
         $(".alert-message").text must equal("Done! Completed task has been deleted")
         
         click on $("#searchbox")
-        enter("Apple")
+        enter("Washed")
         submit()  // $("#searchsubmit").click()
         
-        $("section h1").text must equal("12 computers found")
+        $("section h1").text must equal("No completed tasks found")
     }
   }
 }
