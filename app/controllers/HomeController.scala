@@ -14,7 +14,7 @@ import models.TermRepository
 import java.util.Locale.Category
 
 /**
-  * Manage a database of computers
+  * Manage a database of tasks
   */
 class HomeController @Inject()(taskService: CompletedTaskRepository,
                                categoryService: CategoryRepository,

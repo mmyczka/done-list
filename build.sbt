@@ -1,8 +1,8 @@
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
   .settings(
-    name := "play-scala-anorm-example",
-    version := "1.0-SNAPSHOT",
+    name := "done-list",
+    version := "1.0",
     scalaVersion := "2.13.10",
     libraryDependencies ++= Seq(
       guice,
