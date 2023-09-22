@@ -36,10 +36,14 @@ db.default.password=""
 ```
 
 These configurations direct the application to use the local embedded H2 database named "done-list" with the default credentials.
-### Production Setup on Windows
-While setting up the application for local production on Windows, a couple of issues were encountered and resolved:
-A secret key was required, as the default one wasn't suitable.
-The application's configuration file needed a specific path to the server due to the absence of a root server path.
-Getting Started
+
+### Production Setup:
+The `sbt dist` command was executed to produce a distribution for production. When deploying and running this distribution, it is necessary to add a secret key to the application's configuration to ensure security and functionality. An example of a secret key would be:
+
+```
+play.http.secret.key="ad31779d4ee49d5ad5162bf1429c32e2e9933f3b"
+```
+
+It's crucial to ensure that the secret key is kept confidential to maintain the security of the application.
 
 *This documentation was generated with the assistance of OpenAI's ChatGPT.*
