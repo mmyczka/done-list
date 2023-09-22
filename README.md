@@ -3,7 +3,7 @@
 "Done-list" is a web-based application designed to allow users to record tasks they have completed and reflect on how they feel after completing these tasks. The project serves as a unique twist on the traditional to-do list, emphasizing retrospective reflection and personal growth.
 
 ## Origin and Licensing
-This project originates from the "Play Scala Anorm Example" template and has since undergone various modifications to suit the "Done-list" domain. Both the original template and the "Done-list" project are licensed under the CC0-1.0 license.
+This project originates from the [play-scala-anorm-example](https://github.com/playframework/play-samples/tree/2.9.x/play-scala-anorm-example) template and has since undergone various modifications to suit the "Done-list" domain. Both the original template and the "Done-list" project are licensed under the CC0-1.0 license.
 
 ## Modifications Made
 ### Domain-specific Naming
