@@ -7,7 +7,7 @@ This project originates from the [play-scala-anorm-example](https://github.com/p
 
 ## Modifications Made
 ### Domain-specific Naming
-Names have been changed to align more with the "Done-list" domain. This includes class names, table names, and routes.
+Names have been changed to align more with the "Done-list" domain. This includes class names, table names, and routes. One of the prominent changes in the code was the renaming of "Computer" to "CompletedTask", aligning better with the project's theme.
 ### Database Structure
 New positions were added to the database:
 
@@ -18,6 +18,9 @@ Classifications for tasks, including Cleaning, Cooking, Shopping, Programming, W
   specifies the significance and the reflection period of a task, such as Daily, Weekly, Monthly, and Annual.
 ### Graphical User Interface
 The GUI has been redesigned to reflect the unique nature and requirements of the "Done-list" domain.
+
+![GUI](/doc/img/gui.png)
+
 ### Example Data
 New sample data has been added to the database to provide a better representation of potential real-world use cases.
 ### Testing
