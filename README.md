@@ -11,11 +11,11 @@ Names have been changed to align more with the "Done-list" domain. This includes
 ### Database Structure
 New positions were added to the database:
 
-**Category** 
+- **Category** 
 Classifications for tasks, including Cleaning, Cooking, Shopping, Programming, Working, etc.
 
-**Term**
-Frequencies for tasks, such as Daily, Weekly, Monthly, and Annual.
+- **Term**
+  specifies the significance and the reflection period of a task, such as Daily, Weekly, Monthly, and Annual.
 ### Graphical User Interface
 The GUI has been redesigned to reflect the unique nature and requirements of the "Done-list" domain.
 ### Example Data
@@ -30,4 +30,4 @@ A secret key was required, as the default one wasn't suitable.
 The application's configuration file needed a specific path to the server due to the absence of a root server path.
 Getting Started
 
-This documentation was generated with the assistance of OpenAI's ChatGPT.
+*This documentation was generated with the assistance of OpenAI's ChatGPT.*
