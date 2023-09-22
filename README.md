@@ -26,7 +26,16 @@ New sample data has been added to the database to provide a better representatio
 ### Testing
 Test cases have been modified to be compatible with the new changes made to the software.
 ### Database Adaptation
-Originally configured for an in-memory H2 database, the system has now been adapted for an embedded H2 database.
+Originally configured for an in-memory H2 database, the system has now been adapted for an embedded H2 database. 
+The transition from an in-memory to an embedded database primarily involved updating the configuration settings. The following changes were made:
+
+```
+db.default.url="jdbc:h2:~/done-list"
+db.default.username=sa
+db.default.password=""
+```
+
+These configurations direct the application to use the local embedded H2 database named "done-list" with the default credentials.
 ### Production Setup on Windows
 While setting up the application for local production on Windows, a couple of issues were encountered and resolved:
 A secret key was required, as the default one wasn't suitable.
